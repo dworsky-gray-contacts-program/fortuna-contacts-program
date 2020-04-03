@@ -1,38 +1,69 @@
-import java.util.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class MainMenu {
 
-    // Store contacts in HashMap because - store 2 different data types in key-value pair, target either the key or the value in the search function, and we can 'clear'
-    public static HashMap<String, Integer> contactsList() {
-
-        HashMap<String, Integer>contacts = new HashMap<>();
-
-        contacts.put("John Doe", 1234567881);
-        contacts.put("Jane Doe", 1569012833);
-
-        // Show all contacts - loop through hashmap, output all key-value contacts
-        // METHOD 1
-//        for (Object name : contacts.keySet()) {
-//            System.out.println(name);
+//    public static HashMap<String, Integer> contactsList() {
+//
+//        HashMap<String, Integer>contacts = new HashMap<>();
+//
+//        contacts.put("John Doe", 1234567881);
+//        contacts.put("Jane Doe", 1569012833);
+//
+//        // Show all contacts - loop through hashmap, output all key-value contacts
+//
+//        // METHOD 1
+//        System.out.println("\n- - - All Contacts - -");
+//        System.out.printf("Name ");
+//        for (Map.Entry<String, Integer> contact : contacts.entrySet()) {
+//            System.out.println("Name: "+contact.getKey()+ "     Phone: "+contact.getValue());
 //        }
+//        System.out.println("- - - - - - -");
+//
+//        // need to not display return below
+//        return contacts;
+//    }
 
-        // METHOD 2
-        System.out.println("\n- - - All Contacts - -");
-        for (Map.Entry<String, Integer> contact : contacts.entrySet()) {
-            System.out.println("Name: "+contact.getKey()+ "     Phone: "+contact.getValue());
-        }
-        System.out.println("- - - - - - -");
-        return contacts;
-    }
-
-    public static void main(String[] args) {
-
-// 2 files min - main and contacts
-// HashMap to store contacts - key = name, value = phone number
-
+    public static void main(String[] args) throws IOException {
 
         Scanner scanner = new Scanner(System.in);
 
+        // Establishing directory and file names
+        String directory = "data";
+        String filename = "contacttest.txt";
+
+        // Establish paths to directory and files within directory
+        Path dataDirectory = Paths.get(directory);
+        Path contactsPath = Paths.get(directory, filename);
+
+        // Check if pathway to directory exists - if it doesn't, create it
+        if (Files.notExists(dataDirectory)) {
+            Files.createDirectories(dataDirectory);
+        }
+        // Check if file in directory exists - if it doesn't, create it
+        if (!Files.exists(contactsPath)) {
+            Files.createFile(contactsPath);
+        }
+
+
+        // METHOD USING ARRAYLIST TO STORE INFORMATION
+//         Create new ArrayList
+        List<String> contacts = new ArrayList<>();
+
+
+//         Add to List
+        contacts.add("John Doe 1234567881");
+        contacts.add("Jane Doe 1569012833");
+
+//         Write to contacts.txt
+        Files.write(contactsPath, contacts);
+
+//         Output contacts.txt
 
 
         int menuSelection = 0;
@@ -57,9 +88,9 @@ public class MainMenu {
         // test
         System.out.println(menuSelection);
 
-        if (menuSelection == 1) {
-            System.out.println(contactsList());
-        }
+//        if (menuSelection == 1) {
+//            System.out.println(//need to enter code here);
+//        }
 
 
     }
