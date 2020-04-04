@@ -8,34 +8,13 @@ import java.util.Scanner;
 
 public class MainMenu {
 
-//    public static HashMap<String, Integer> contactsList() {
-//
-//        HashMap<String, Integer>contacts = new HashMap<>();
-//
-//        contacts.put("John Doe", 1234567881);
-//        contacts.put("Jane Doe", 1569012833);
-//
-//        // Show all contacts - loop through hashmap, output all key-value contacts
-//
-//        // METHOD 1
-//        System.out.println("\n- - - All Contacts - -");
-//        System.out.printf("Name ");
-//        for (Map.Entry<String, Integer> contact : contacts.entrySet()) {
-//            System.out.println("Name: "+contact.getKey()+ "     Phone: "+contact.getValue());
-//        }
-//        System.out.println("- - - - - - -");
-//
-//        // need to not display return below
-//        return contacts;
-//    }
-
     public static void main(String[] args) throws IOException {
 
         Scanner scanner = new Scanner(System.in);
 
         // Establishing directory and file names
-        String directory = "data";
-        String filename = "contacttest.txt";
+        final String directory = "data";
+        final String filename = "contacts.txt";
 
         // Establish paths to directory and files within directory
         Path dataDirectory = Paths.get(directory);
@@ -52,18 +31,15 @@ public class MainMenu {
 
 
         // METHOD USING ARRAYLIST TO STORE INFORMATION
-//         Create new ArrayList
+        // Create new ArrayList
         List<String> contacts = new ArrayList<>();
+        // Add to List
+        contacts.add("John Doe | 1234567881");
+        contacts.add("Jane Doe | 1569012833");
 
-
-//         Add to List
-        contacts.add("John Doe 1234567881");
-        contacts.add("Jane Doe 1569012833");
-
-//         Write to contacts.txt
+        // Write to contacts.txt
         Files.write(contactsPath, contacts);
 
-//         Output contacts.txt
 
 
         int menuSelection = 0;
@@ -85,13 +61,50 @@ public class MainMenu {
         }
         while (true);
 
-        // test
-        System.out.println(menuSelection);
+        // Switch statement for options
+        switch (menuSelection) {
+            case 1:
+                viewAll();
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
+    }
 
-//        if (menuSelection == 1) {
-//            System.out.println(//need to enter code here);
-//        }
+    // VIEW ALL CONTACTS IN LIST
+    public static void viewAll() throws IOException {
+        Path contactsPath = Paths.get("data", "contacts.txt");
+        List<String> contacts = Files.readAllLines(contactsPath);
+        System.out.println("\n\t- - - - - All Contacts - - - - -");
+        for (String contact : contacts) {
+            System.out.println("\t\t"+contact);
+        }
+        System.out.println("\t- - - - - - - - - - - - - - - -");
+        promptMainMenu();
+    }
 
+    // PROMPT TO GO BACK TO MAIN MENU
+    public static void promptMainMenu() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        String goToMain;
 
+        do {
+            System.out.println("\nReturn to Main Menu? [Y/N]");
+            goToMain = scanner.next();
+
+            if (goToMain.equalsIgnoreCase("y")) {
+                main(null);
+                break;
+            } else if (goToMain.equalsIgnoreCase("n")) {
+                System.out.println("Exiting program. Goodbye.");
+                break;
+            } else {
+                System.out.println("Invalid entry.");
+            }
+        } while (true);
     }
 }
