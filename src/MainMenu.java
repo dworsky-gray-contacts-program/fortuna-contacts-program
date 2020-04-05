@@ -2,7 +2,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,6 +25,8 @@ public class MainMenu {
     // Establish path to directory and file(s)
     static Path dataDirectory = Paths.get(directory);
     static Path contactsPath = Paths.get(directory, filename);
+
+//    static List<String> contacts = new ArrayList<>();
 
     // Begin Main
     public static void main(String[] args) throws IOException {
@@ -55,7 +59,7 @@ public class MainMenu {
                 searchContacts();
                 break;
             case 3:
-//                addContact();
+                addContact();
                 break;
             case 4:
                 deleteContact();
@@ -113,47 +117,32 @@ public class MainMenu {
     }
 
     // ADD CONTACT TO LIST
-//    public static void addContact() throws IOException {
-//        String name;
-//        String lastName;
-//        String phoneNum;
-//
-//        System.out.println("Please enter a first name.");
-//        scanner.nextLine();
-//        name = scanner.nextLine().trim()+" ";
-//        System.out.println("Please enter a last name.");
-//        lastName = scanner.nextLine().trim();
-//
-//        name = name.concat(lastName+" | ");
-//        System.out.println(name);
-//
-//        do {
-//            System.out.println("Please enter a 10-digit phone number, starting with the area code.");
-//            phoneNum = scanner.nextLine();
-//
-//
-//        } while (! phoneNum.length() == 10);
-//
-//
-//        // Check if pathway to directory exists - if it doesn't, create it
-//        if (Files.notExists(dataDirectory)) {
-//            Files.createDirectories(dataDirectory);
-//        }
-//        // Check if file in directory exists - if it doesn't, create it
-//        if (!Files.exists(contactsPath)) {
-//            Files.createFile(contactsPath);
-//        }
-//
-//        // METHOD USING ARRAYLIST TO STORE INFORMATION
-//        // Create new ArrayList
+    public static void addContact() throws IOException {
+        String name;
+        String phoneNum;
+        String contact;
+
+        System.out.println("Please enter a first name.");
+        scanner.nextLine();
+        name = scanner.nextLine().trim() + " ";
+
+        System.out.println("Please enter a last name.");
+        name += scanner.nextLine().trim()+" | ";
+
+        // testing to say what name looks like
+        System.out.println(name);
+
+        System.out.println("Please enter a 10-digit phone number, starting with the area code.");
+        phoneNum = scanner.nextLine().trim();
+
+        contact = name + phoneNum;
+
+        //ASK INSTRUCTOR ON MONDAY - stored data in string var 'contact', and added to contacts.txt with 'Arrays.asList' /// Is it better to do it this way, or create a new object and add entry to that before writing to list? pros/cons?
 //        List<String> contacts = new ArrayList<>();
-//        // Add to List
-//        contacts.add("John Doe | 1234567881");
-//        contacts.add("Jane Doe | 1569012833");
-//
-//        // Write to contacts.txt
-//        Files.write(contactsPath, contacts);
-//    }
+//        contacts.add(contact);
+
+        Files.write(contactsPath, Arrays.asList(contact), StandardOpenOption.APPEND);
+    }
 
     // DELETE CONTACT FROM LIST
     public static void deleteContact() {
