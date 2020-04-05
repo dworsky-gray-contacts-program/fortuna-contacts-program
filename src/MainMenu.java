@@ -12,7 +12,7 @@ public class MainMenu {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Establishing directory and file names
+        // Establish directory and file names - should never change, so have them as final
         final String directory = "data";
         final String filename = "contacts.txt";
 
@@ -41,7 +41,6 @@ public class MainMenu {
         Files.write(contactsPath, contacts);
 
 
-
         int menuSelection = 0;
         do {
             try {
@@ -61,30 +60,81 @@ public class MainMenu {
         }
         while (true);
 
-        // Switch statement for options
+        // SWITCH FOR MENU OPTIONS
         switch (menuSelection) {
             case 1:
-                viewAll();
+                viewContacts();
                 break;
             case 2:
+                searchContacts();
                 break;
             case 3:
+                addContact();
                 break;
             case 4:
+                deleteContact();
                 break;
         }
     }
 
     // VIEW ALL CONTACTS IN LIST
-    public static void viewAll() throws IOException {
+    public static void viewContacts() throws IOException {
         Path contactsPath = Paths.get("data", "contacts.txt");
         List<String> contacts = Files.readAllLines(contactsPath);
+
         System.out.println("\n\t- - - - - All Contacts - - - - -");
         for (String contact : contacts) {
-            System.out.println("\t\t"+contact);
+            System.out.println("\t\t" + contact);
         }
         System.out.println("\t- - - - - - - - - - - - - - - -");
         promptMainMenu();
+    }
+
+    // SEARCH FOR CONTACT IN LIST
+    public static void searchContacts() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        String userSearch;
+        String userContinue;
+
+        do {
+            System.out.println("\n\t- - - - - Search Contacts - - - - -");
+            System.out.println("\tEnter Name");
+            userSearch = scanner.nextLine().toLowerCase();
+
+            Path contactsPath = Paths.get("data", "contacts.txt");
+            List<String> contacts = Files.readAllLines(contactsPath);
+
+            for (String contact : contacts) {
+                if (contact.toLowerCase().contains(userSearch)) {
+                    System.out.println(contact);
+                }
+            }
+            if (!contacts.toString().toLowerCase().contains(userSearch)) {
+                System.out.println("Sorry, could not find a contact with that name.");
+            }
+
+            System.out.println("Would you like to search again? [Y/N]");
+            userContinue = scanner.next();
+
+            if (userContinue.equalsIgnoreCase("y")) {
+                searchContacts();
+            } else if (userContinue.equalsIgnoreCase("n")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter [Y]es or [N]o.");
+            }
+            promptMainMenu();
+        } while (true);
+    }
+
+    // ADD CONTACT TO LIST
+    public static void addContact() {
+
+    }
+
+    // DELETE CONTACT FROM LIST
+    public static void deleteContact() {
+
     }
 
     // PROMPT TO GO BACK TO MAIN MENU
