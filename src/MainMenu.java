@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import javax.swing.text.MaskFormatter;
+
 
 public class MainMenu {
 
@@ -73,13 +75,17 @@ public class MainMenu {
     // VIEW ALL CONTACTS IN LIST
     public static void viewContacts() throws IOException {
         contacts = Files.readAllLines(contactsPath);
+        String formatName = "Name";
+        String formatNumber = "Phone Number";
 
-        System.out.println("\n- - - - - CONTACTS - - - - -");
-        System.out.println("\tName | Phone Number");
+        System.out.println("\t +---------------CONTACTS--------------+");
+        System.out.printf("\t | %-20s | %-1s |\n", formatName, formatNumber);
+        System.out.println("\t |.....................................|");
+
         for (String contact : contacts) {
-            System.out.println("\t" + contact);
+            System.out.printf("\t %s\n",  contact);
         }
-        System.out.println("- - - - - - - - - - - - - - -");
+        System.out.println("\t +----------------FINISH---------------+ ");
     }
 
     // SEARCH FOR CONTACT IN LIST
@@ -123,31 +129,40 @@ public class MainMenu {
         } while (userContinueBoolean);
     }
 
-    // ADD CONTACT TO LIST
+
+
+    //     ADD CONTACT TO LIST
     public static void addContact() throws IOException {
         String name;
+        String lastName;
+        String fullName;
         String phoneNum;
         String contact;
+        String pipe = " |";
+
 
         // TODO: Add conditionals in addContact method - firstname, lastName, phoneNumber(all characters are numbers, length is either 7 or 10)
         System.out.println("Please enter a first name.");
-        name = scanner.nextLine().trim()+" ";
+        name = scanner.nextLine().trim();
 
         System.out.println("Please enter a last name.");
-        name += scanner.nextLine().trim() + " | ";
+        lastName = scanner.nextLine().trim();
 
         // testing to say what name looks like
         System.out.println(name);
 
+        fullName = name + " " + lastName;
+
         System.out.println("Please enter a 10-digit phone number, starting with the area code.");
         phoneNum = scanner.nextLine().trim();
 
-        contact = name + phoneNum;
+        contact = String.format("| %-20s | %-7s %3s", fullName, phoneNum, pipe);
 
         System.out.println(contact);
 
         Files.write(contactsPath, Arrays.asList(contact), StandardOpenOption.APPEND);
     }
+
 
     // DELETE CONTACT FROM LIST
     public static void deleteContact() throws IOException {
@@ -194,6 +209,7 @@ public class MainMenu {
                 System.out.println("Invalid input. Please try again.");
                 promptMainMenu();
             }
+
         } else {
             System.out.println("Invalid entry.");
             promptMainMenu();
