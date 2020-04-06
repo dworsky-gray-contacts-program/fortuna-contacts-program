@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class MainMenu {
 
@@ -20,6 +22,7 @@ public class MainMenu {
     // Should never change, so have them as 'final'
     final static String DIRECTORY = "data";
     final static String FILENAME = "contacts.txt";
+    public static boolean userContinueBoolean = true;
 
     // Establish path to directory and file(s)
     static Path dataDirectory = Paths.get(DIRECTORY);
@@ -29,7 +32,7 @@ public class MainMenu {
     // Begin Main
     public static void main(String[] args) throws IOException {
 
-        int menuSelection;
+        int menuSelection = 0;
 
         do {
             try {
@@ -40,18 +43,19 @@ public class MainMenu {
                 System.out.println("\t4. Delete A Contact");
                 System.out.println("\tPlease enter an option (1, 2, 3, 4, 5)");
                 System.out.println("- - - - - - - - - - - - - - - -");
-                menuSelection = scanner.nextInt();
+                menuSelection = Integer.parseInt(scanner.nextLine());
                 break;
             } catch (Exception e) {
                 System.out.println("Not a valid input - please try again.");
-                scanner.next();
+                scanner.nextLine();
             }
         }
-        while (true);
+        while (userContinueBoolean);
 
         switch (menuSelection) {
             case 1:
                 viewContacts();
+                promptMainMenu();
                 break;
             case 2:
                 searchContacts();
@@ -75,7 +79,6 @@ public class MainMenu {
             System.out.println("\t" + contact);
         }
         System.out.println("- - - - - - - - - - - - - - -");
-        promptMainMenu();
     }
 
     // SEARCH FOR CONTACT IN LIST
@@ -83,30 +86,30 @@ public class MainMenu {
         String userSearch;
         String userContinue;
         String results = "";
+        int test = 0;
         contacts = Files.readAllLines(contactsPath);
 
         do {
             System.out.println("\n- - - - - SEARCH - - - - -");
             System.out.print("Enter Full or Partial Name: ");
-            scanner.nextLine();
             userSearch = scanner.nextLine().toLowerCase();
 
 
             for (String contact : contacts) {
                 if (contact.toLowerCase().contains(userSearch)) {
-                    results.concat(contact+"\n");
+                    results += contact + "\n";
+                    test++;
                 }
             }
 
-
-            if (!results.equals(" ")) {
+            if (test >= 1) {
                 System.out.println(results);
             } else {
                 System.out.println("Sorry, could not find a contact with that name.");
             }
 
             System.out.println("Would you like to search again? [Y/N]");
-            userContinue = scanner.next();
+            userContinue = scanner.nextLine();
 
             if (userContinue.equalsIgnoreCase("y")) {
                 searchContacts();
@@ -115,7 +118,7 @@ public class MainMenu {
             } else {
                 System.out.println("Invalid input. Please enter [Y]es or [N]o.");
             }
-        } while (true);
+        } while (userContinueBoolean);
         promptMainMenu();
     }
 
@@ -140,16 +143,26 @@ public class MainMenu {
 
         contact = name + phoneNum;
 
-        //ASK INSTRUCTOR ON MONDAY - stored data in string var 'contact', and added to contacts.txt with 'Arrays.asList' /// Is it better to do it this way, or create a new object and add entry to that before writing to list? pros/cons?
-//        List<String> contacts = new ArrayList<>();
-//        contacts.add(contact);
-
         Files.write(contactsPath, Arrays.asList(contact), StandardOpenOption.APPEND);
     }
 
     // DELETE CONTACT FROM LIST
-    public static void deleteContact() {
+    public static void deleteContact() throws IOException {
+        String deleteContact = "";
 
+        viewContacts();
+
+        System.out.println("Which contact would you like to delete? (Enter full name)");
+        deleteContact = scanner.nextLine();
+
+        // lambda expression? unsure why below variable necessary
+        String finalDeleteContact = deleteContact;
+
+        List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.contains(finalDeleteContact)).collect(Collectors.toList());
+
+        Files.write(contactsPath, updatedContacts, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+
+        viewContacts();
     }
 
     // PROMPT TO GO BACK TO MAIN MENU
@@ -157,17 +170,21 @@ public class MainMenu {
         String goToMain;
         String exit;
 
+        // 1st question
         System.out.println("\nReturn to Main Menu? [Y/N]");
-        goToMain = scanner.next();
+        goToMain = scanner.nextLine();
 
         if (goToMain.equalsIgnoreCase("y")) {
             main(null);
         } else if (goToMain.equalsIgnoreCase("n")) {
+
+            // 2nd question
             System.out.println("Exit program? [Y/N]");
-            exit = scanner.next();
+            exit = scanner.nextLine();
 
             if (exit.equalsIgnoreCase("y")) {
                 System.out.println("Exiting program. Goodbye.");
+                System.exit(0);
             } else if (exit.equalsIgnoreCase("n")) {
                 promptMainMenu();
             } else {
@@ -180,3 +197,6 @@ public class MainMenu {
         }
     }
 }
+
+// instead of next, use nextline for everything and parse the string - pretty good habit to get into
+// nextline, everytime it grabs
