@@ -33,7 +33,6 @@ public class MainMenu {
     public static void main(String[] args) throws IOException {
 
         int menuSelection = 0;
-
         do {
             try {
                 System.out.println("\n- - - - - MAIN MENU - - - - -");
@@ -47,7 +46,6 @@ public class MainMenu {
                 break;
             } catch (Exception e) {
                 System.out.println("Not a valid input - please try again.");
-                scanner.nextLine();
             }
         }
         while (userContinueBoolean);
@@ -59,12 +57,15 @@ public class MainMenu {
                 break;
             case 2:
                 searchContacts();
+                promptMainMenu();
                 break;
             case 3:
                 addContact();
+                promptMainMenu();
                 break;
             case 4:
                 deleteContact();
+                promptMainMenu();
                 break;
         }
     }
@@ -84,9 +85,9 @@ public class MainMenu {
     // SEARCH FOR CONTACT IN LIST
     public static void searchContacts() throws IOException {
         String userSearch;
-        String userContinue;
+        String searchAgain;
         String results = "";
-        int test = 0;
+        int counter = 0;
         contacts = Files.readAllLines(contactsPath);
 
         do {
@@ -98,28 +99,28 @@ public class MainMenu {
             for (String contact : contacts) {
                 if (contact.toLowerCase().contains(userSearch)) {
                     results += contact + "\n";
-                    test++;
+                    counter++;
                 }
             }
 
-            if (test >= 1) {
+            // TODO: 1. Reformat searchContacts output
+            if (counter >= 1) {
                 System.out.println(results);
             } else {
-                System.out.println("Sorry, could not find a contact with that name.");
+                System.out.println("Sorry, could not find a contact with that name.\n");
             }
 
+            // Ask if user wants to search again - if not, end searchContacts method
             System.out.println("Would you like to search again? [Y/N]");
-            userContinue = scanner.nextLine();
-
-            if (userContinue.equalsIgnoreCase("y")) {
+            searchAgain = scanner.nextLine();
+            if (searchAgain.equalsIgnoreCase("y")) {
                 searchContacts();
-            } else if (userContinue.equalsIgnoreCase("n")) {
-                break;
+            } else if (searchAgain.equalsIgnoreCase("n")) {
+                userContinueBoolean = false;
             } else {
                 System.out.println("Invalid input. Please enter [Y]es or [N]o.");
             }
         } while (userContinueBoolean);
-        promptMainMenu();
     }
 
     // ADD CONTACT TO LIST
@@ -128,9 +129,9 @@ public class MainMenu {
         String phoneNum;
         String contact;
 
+        // TODO: Add conditionals in addContact method - firstname, lastName, phoneNumber(all characters are numbers, length is either 7 or 10)
         System.out.println("Please enter a first name.");
-        scanner.nextLine();
-        name = scanner.nextLine().trim() + " ";
+        name = scanner.nextLine().trim()+" ";
 
         System.out.println("Please enter a last name.");
         name += scanner.nextLine().trim() + " | ";
@@ -143,6 +144,8 @@ public class MainMenu {
 
         contact = name + phoneNum;
 
+        System.out.println(contact);
+
         Files.write(contactsPath, Arrays.asList(contact), StandardOpenOption.APPEND);
     }
 
@@ -152,6 +155,7 @@ public class MainMenu {
 
         viewContacts();
 
+        // TODO: Format below output
         System.out.println("Which contact would you like to delete? (Enter full name)");
         deleteContact = scanner.nextLine();
 
@@ -184,7 +188,6 @@ public class MainMenu {
 
             if (exit.equalsIgnoreCase("y")) {
                 System.out.println("Exiting program. Goodbye.");
-                System.exit(0);
             } else if (exit.equalsIgnoreCase("n")) {
                 promptMainMenu();
             } else {
@@ -197,6 +200,3 @@ public class MainMenu {
         }
     }
 }
-
-// instead of next, use nextline for everything and parse the string - pretty good habit to get into
-// nextline, everytime it grabs
