@@ -209,6 +209,7 @@ public class MainMenu {
                 System.out.println("Invalid input. Please try again.");
                 promptMainMenu();
             }
+
         } else {
             System.out.println("Invalid entry.");
             promptMainMenu();
