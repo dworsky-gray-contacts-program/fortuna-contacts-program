@@ -11,22 +11,20 @@ import java.util.Scanner;
 public class MainMenu {
 
     // Initialize Scanner
-    // private static Scanner scanner;
     private static Scanner scanner = new Scanner(System.in);
 
-    // Set Scanner
-    // public static void SetScanner(Scanner input) {scanner = input;}
+    // Initialize new ArrayList
+    public static List<String> contacts = new ArrayList<>();
 
     // Establish directory and file names
     // Should never change, so have them as 'final'
-    final static String directory = "data";
-    final static String filename = "contacts.txt";
+    final static String DIRECTORY = "data";
+    final static String FILENAME = "contacts.txt";
 
     // Establish path to directory and file(s)
-    static Path dataDirectory = Paths.get(directory);
-    static Path contactsPath = Paths.get(directory, filename);
+    static Path dataDirectory = Paths.get(DIRECTORY);
+    static Path contactsPath = Paths.get(DIRECTORY, FILENAME);
 
-//    static List<String> contacts = new ArrayList<>();
 
     // Begin Main
     public static void main(String[] args) throws IOException {
@@ -35,18 +33,18 @@ public class MainMenu {
 
         do {
             try {
-                System.out.println("\n\t- - - - - Main Menu - - - - -");
+                System.out.println("\n- - - - - MAIN MENU - - - - -");
                 System.out.println("\t1. View All Contacts");
                 System.out.println("\t2. Search Contacts List");
                 System.out.println("\t3. Add A Contact");
                 System.out.println("\t4. Delete A Contact");
                 System.out.println("\tPlease enter an option (1, 2, 3, 4, 5)");
-                System.out.println("\t- - - - - - - - - - - - - - - -");
+                System.out.println("- - - - - - - - - - - - - - - -");
                 menuSelection = scanner.nextInt();
                 break;
             } catch (Exception e) {
                 System.out.println("Not a valid input - please try again.");
-                scanner.nextLine();
+                scanner.next();
             }
         }
         while (true);
@@ -69,13 +67,14 @@ public class MainMenu {
 
     // VIEW ALL CONTACTS IN LIST
     public static void viewContacts() throws IOException {
-        List<String> contacts = Files.readAllLines(contactsPath);
+        contacts = Files.readAllLines(contactsPath);
 
-        System.out.println("\n\t- - - - - All Contacts - - - - -");
+        System.out.println("\n- - - - - CONTACTS - - - - -");
+        System.out.println("\tName | Phone Number");
         for (String contact : contacts) {
-            System.out.println("\t\t" + contact);
+            System.out.println("\t" + contact);
         }
-        System.out.println("\t- - - - - - - - - - - - - - - -");
+        System.out.println("- - - - - - - - - - - - - - -");
         promptMainMenu();
     }
 
@@ -83,22 +82,26 @@ public class MainMenu {
     public static void searchContacts() throws IOException {
         String userSearch;
         String userContinue;
+        String results = "";
+        contacts = Files.readAllLines(contactsPath);
 
         do {
-            System.out.println("\n\t- - - - - Search Contacts - - - - -");
-            System.out.println("\tEnter Name");
+            System.out.println("\n- - - - - SEARCH - - - - -");
+            System.out.print("Enter Full or Partial Name: ");
             scanner.nextLine();
             userSearch = scanner.nextLine().toLowerCase();
 
-            Path contactsPath = Paths.get("data", "contacts.txt");
-            List<String> contacts = Files.readAllLines(contactsPath);
 
             for (String contact : contacts) {
                 if (contact.toLowerCase().contains(userSearch)) {
-                    System.out.println(contact);
+                    results.concat(contact+"\n");
                 }
             }
-            if (!contacts.toString().toLowerCase().contains(userSearch)) {
+
+
+            if (!results.equals(" ")) {
+                System.out.println(results);
+            } else {
                 System.out.println("Sorry, could not find a contact with that name.");
             }
 
@@ -127,7 +130,7 @@ public class MainMenu {
         name = scanner.nextLine().trim() + " ";
 
         System.out.println("Please enter a last name.");
-        name += scanner.nextLine().trim()+" | ";
+        name += scanner.nextLine().trim() + " | ";
 
         // testing to say what name looks like
         System.out.println(name);
