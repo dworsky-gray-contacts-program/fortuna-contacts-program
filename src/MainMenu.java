@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-import javax.swing.text.MaskFormatter;
 
 
 public class MainMenu {
@@ -19,31 +17,35 @@ public class MainMenu {
 
     // Initialize new ArrayList
     public static List<String> contacts = new ArrayList<>();
+    public static boolean userContinueBoolean = true;
 
     // Establish directory and file names
     // Should never change, so have them as 'final'
     final static String DIRECTORY = "data";
     final static String FILENAME = "contacts.txt";
-    public static boolean userContinueBoolean = true;
 
     // Establish path to directory and file(s)
     static Path dataDirectory = Paths.get(DIRECTORY);
     static Path contactsPath = Paths.get(DIRECTORY, FILENAME);
 
 
-    // Begin Main
     public static void main(String[] args) throws IOException {
+        menu();
+    }
 
+
+    // MAIN MENU
+    private static void menu() throws IOException {
         int menuSelection = 0;
         do {
             try {
-                System.out.println("\n- - - - - MAIN MENU - - - - -");
+                System.out.println("\n\t- - - - - MAIN MENU - - - - -");
                 System.out.println("\t1. View All Contacts");
                 System.out.println("\t2. Search Contacts List");
                 System.out.println("\t3. Add A Contact");
                 System.out.println("\t4. Delete A Contact");
                 System.out.println("\tPlease enter an option (1, 2, 3, 4, 5)");
-                System.out.println("- - - - - - - - - - - - - - - -");
+                System.out.println("\t- - - - - - - - - - - - - - - -");
                 menuSelection = Integer.parseInt(scanner.nextLine());
                 break;
             } catch (Exception e) {
@@ -72,53 +74,80 @@ public class MainMenu {
         }
     }
 
-    // VIEW ALL CONTACTS IN LIST
-    public static void viewContacts() throws IOException {
-        contacts = Files.readAllLines(contactsPath);
+    // CONTACTS OUTPUT - FORMATTING
+    private static void formatContacts(List<String> input) throws IOException {
         String formatName = "Name";
         String formatNumber = "Phone Number";
 
-        System.out.println("\t +---------------CONTACTS--------------+");
+        System.out.println("\n\t +---------------CONTACTS--------------+");
         System.out.printf("\t | %-20s | %-1s |\n", formatName, formatNumber);
         System.out.println("\t |.....................................|");
 
-        for (String contact : contacts) {
-            System.out.printf("\t %s\n",  contact);
+        for (String contact : input) {
+            System.out.printf("\t %s\n", contact);
         }
-        System.out.println("\t +----------------FINISH---------------+ ");
+        System.out.println("\t +----------------FINISH---------------+\n");
+    }
+
+    // VALIDATION
+//    public static boolean validation(String question) {
+//        String validate = "";
+//        boolean test = true;
+//
+//        System.out.println(question);
+//
+//        do {
+//            validate = scanner.nextLine();
+//            switch (validate) {
+//                case "y":
+//                    test = true;
+//                    System.out.println("testyes");
+//                    break;
+//                case "n":
+//                    test = false;
+//                    System.out.println("testno");
+//                    break;
+//                default:
+//                    System.out.println("Invalid input. Please enter [Y]es or [N]o.");
+//            }
+//        } while (!validate.equalsIgnoreCase("y") || !validate.equalsIgnoreCase("n"));
+//        return test;
+//    }
+
+    // VIEW ALL CONTACTS
+    private static void viewContacts() throws IOException {
+        contacts = Files.readAllLines(contactsPath);
+        formatContacts(contacts);
     }
 
     // SEARCH FOR CONTACT IN LIST
     public static void searchContacts() throws IOException {
         String userSearch;
         String searchAgain;
-        String results = "";
-        int counter = 0;
+        List<String> results = new ArrayList<>();
         contacts = Files.readAllLines(contactsPath);
 
         do {
             System.out.println("\n- - - - - SEARCH - - - - -");
-            System.out.print("Enter Full or Partial Name: ");
+            System.out.println("Enter Full or Partial Name.");
             userSearch = scanner.nextLine().toLowerCase();
-
 
             for (String contact : contacts) {
                 if (contact.toLowerCase().contains(userSearch)) {
-                    results += contact + "\n";
-                    counter++;
+                    results.add(contact);
                 }
             }
 
-            // TODO: 1. Reformat searchContacts output
-            if (counter >= 1) {
-                System.out.println(results);
+            if (results.size() >= 1) {
+                formatContacts(results);
             } else {
                 System.out.println("Sorry, could not find a contact with that name.\n");
             }
 
-            // Ask if user wants to search again - if not, end searchContacts method
+//            userContinueBoolean = validation("Would you like to search again? [Y/N]");
             System.out.println("Would you like to search again? [Y/N]");
             searchAgain = scanner.nextLine();
+
             if (searchAgain.equalsIgnoreCase("y")) {
                 searchContacts();
             } else if (searchAgain.equalsIgnoreCase("n")) {
@@ -128,7 +157,6 @@ public class MainMenu {
             }
         } while (userContinueBoolean);
     }
-
 
 
     //     ADD CONTACT TO LIST
@@ -166,16 +194,13 @@ public class MainMenu {
 
     // DELETE CONTACT FROM LIST
     public static void deleteContact() throws IOException {
-        String deleteContact = "";
-
         viewContacts();
 
-        // TODO: Format below output
+        // TODO: Format below output, add conditional for full name
         System.out.println("Which contact would you like to delete? (Enter full name)");
-        deleteContact = scanner.nextLine();
 
         // lambda expression? unsure why below variable necessary
-        String finalDeleteContact = deleteContact;
+        String finalDeleteContact = scanner.nextLine();
 
         List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.contains(finalDeleteContact)).collect(Collectors.toList());
 
