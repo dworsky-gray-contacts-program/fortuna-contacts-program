@@ -1,9 +1,6 @@
-| John Doe           | 5554443456     |
-| Jane Doe           | 9801110989     |
-| Johnny Bravo       | 5678887980     |
 | Scooby Doo         | 4553442333     |
 | Pink Panther       | 1091099000     |
 | Tigger Tiger       | 4445551        |
 | Yogi Bear          | 4567878888     |
-| Test Name          | 3334444        |
 | Random Random      | 4546666        |
+| Rando Caldasar     | 5674444        |

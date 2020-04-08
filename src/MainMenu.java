@@ -35,7 +35,7 @@ public class MainMenu {
                 System.out.println("\t3. Add A Contact");
                 System.out.println("\t4. Delete A Contact");
                 System.out.println("\t5. Exit Program");
-                System.out.println("\tPlease enter an option (1, 2, 3, 4, 5)");
+                System.out.println("\n\tEnter (1, 2, 3, 4, 5)");
                 System.out.println("\t- - - - - - - - - - - - - - - -");
                 menuSelection = Integer.parseInt(scanner.nextLine());
                 break;
@@ -98,12 +98,12 @@ public class MainMenu {
         contacts = Files.readAllLines(contactsPath);
 
         do {
-            System.out.println("\n- - - - - SEARCH - - - - -");
-            System.out.println("Enter Full or Partial Name.");
+            System.out.println("\n\t- - - - - - SEARCH - - - - - -");
+            System.out.println("\tEnter Full or Partial Name.");
             userSearch = scanner.nextLine().toLowerCase();
 
             for (String contact : contacts) {
-                if (contact.toLowerCase().contains(userSearch)) {
+                if (contact.substring(0, 20).toLowerCase().contains(userSearch)) {
                     results.add(contact);
                 }
             }
@@ -111,13 +111,12 @@ public class MainMenu {
             if (results.size() >= 1) {
                 formatContacts(results);
             } else {
-                System.out.println("Sorry, could not find a contact with that name.\n");
+                System.out.println("\nSorry, could not find a contact with that name.");
             }
 
-            userContinueBoolean = validation("Would you like to search again? [Y/N]");
             results.clear();
 
-        } while (userContinueBoolean);
+        } while (validation("Would you like to search again? [Y/N]"));
     }
 
 
@@ -126,51 +125,36 @@ public class MainMenu {
         String firstName, lastName, fullName;
         String phoneNum;
         String contact;
-        String pipe = "|";
-        boolean inputCheck = true;
+        boolean inputCheck;
 
         do {
-            // FIRST NAME - validate only letters, capitalize 1st letter
+            System.out.println("\n\t- - - - - ADD - - - - -");
+
+            // FIRST NAME
             do {
-                System.out.print("Enter first name: ");
+                System.out.println("\tEnter first name.");
                 firstName = scanner.nextLine().trim();
-                firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1); // capitalize 1st letter
+                // capitalize 1st letter
+                firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
+            } while (!isOnlyLetters(firstName));
 
-                // Check if input contains only letters
-                if (firstName.matches("[a-zA-Z]+")) {
-                    inputCheck = true;
-                } else {
-                    System.out.println("Invalid entry - please enter a valid name.");
-                    firstName = "";
-                    inputCheck = false;
-                }
-            } while (!inputCheck);
-
-            // LAST NAME - validate only letters, capitalize 1st letter
+            // LAST NAME
             do {
-                System.out.print("Enter last name: ");
+                System.out.println("\tEnter last name.");
                 lastName = scanner.nextLine().trim();
-                lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1); // capitalize 1st letter
-
-                // Check if input contains only letters
-                if (lastName.matches("[a-zA-Z]+")) {
-                    inputCheck = true;
-                } else {
-                    System.out.println("Invalid entry - please enter a valid name.");
-                    lastName = "";
-                    inputCheck = false;
-                }
-            } while (!inputCheck);
+                // capitalize 1st letter
+                lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
+            } while (!isOnlyLetters(lastName));
 
             // PHONE NUMBER - validate only numbers, is either 7 or 10 characters in length
             do {
-                System.out.print("Enter phone number: ");
+                System.out.println("\tEnter phone number.");
                 phoneNum = scanner.nextLine().trim();
 
                 if (phoneNum.matches("[0-9]+") && phoneNum.length() == 7 || phoneNum.length() == 10) {
                     inputCheck = true;
                 } else {
-                    System.out.println("Not a valid number. Please enter again.");
+                    System.out.println("Not a valid number. Please enter again.\n");
                     phoneNum = "";
                     inputCheck = false;
                 }
@@ -180,41 +164,59 @@ public class MainMenu {
             fullName = String.format("%s %s", firstName, lastName);
 
             // format contact before adding it to .txt file
-            contact = String.format("%s %-18s %s %-14s %s", pipe, fullName, pipe, phoneNum, pipe);
+            contact = String.format("| %-18s | %-14s |", fullName, phoneNum);
 
             // Add new contact to .txt file
             Files.write(contactsPath, Arrays.asList(contact), StandardOpenOption.APPEND);
 
             System.out.println("\nContact successfully added.");
-            inputCheck = validation("Add another contact? [Y/N]");
-        } while (inputCheck);
+        } while (validation("Add another contact? [Y/N]"));
     }
 
     // DELETE CONTACT FROM LIST
     public static void deleteContact() throws IOException {
-        viewContacts();
+        String deleteContact;
 
-        // TODO: Format below output, add conditional for full name
-        System.out.println("Which contact would you like to delete? (Enter full name)");
+        do {
+            viewContacts();
+            System.out.println("\t- - - - - DELETE - - - - -");
 
-        // lambda expression? unsure why below variable necessary
-        String finalDeleteContact = scanner.nextLine();
+            do {
+                System.out.println("\tDelete Contact (Enter full name).");
+                deleteContact = scanner.nextLine();
+            } while (!isOnlyLetters(deleteContact));
 
-        List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.contains(finalDeleteContact)).collect(Collectors.toList());
+            String finalDeleteContact = deleteContact;
 
-        Files.write(contactsPath, updatedContacts, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.substring(1, 20).trim().equalsIgnoreCase(finalDeleteContact)).collect(Collectors.toList());
 
-        viewContacts();
+            Files.write(contactsPath, updatedContacts, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            System.out.println("Contact successfully deleted.");
+
+        } while (validation("delete another contact? Y/N]"));
+    }
+
+    // VALIDATE STRING FOR NAMES - ALL LETTERS
+    public static boolean isOnlyLetters(String input) {
+        boolean isStringBoolean;
+
+        if (input.matches("[a-z A-Z]+")) {
+            isStringBoolean = true;
+        } else {
+            System.out.println("Not a valid name - please enter again.\n");
+            isStringBoolean = false;
+        }
+        return isStringBoolean;
     }
 
 
     // VALIDATION FOR ALL QUESTIONS
     public static boolean validation(String question) {
         String validate = "";
-        boolean validateBoolean = true;
+        boolean validateBoolean;
 
-        System.out.println(question);
         do {
+            System.out.println(question);
             validate = scanner.nextLine();
             switch (validate) {
                 case "y":
@@ -225,6 +227,7 @@ public class MainMenu {
                     break;
                 default:
                     System.out.println("Invalid input. Please enter [Y]es or [N]o.");
+                    validateBoolean = false;
             }
         } while (validate.length() != 1);
         return validateBoolean;
@@ -235,12 +238,14 @@ public class MainMenu {
     public static void promptMainMenu() throws IOException {
         do {
             userContinueBoolean = validation("Return to Main Menu? [Y/N]");
-
             if (userContinueBoolean) {
                 main(null);
-            } else {
-                userContinueBoolean = validation("Exit program? [Y/N]");
             }
-        } while (!userContinueBoolean);
+        } while (!validation("Exit program? [Y/N]"));
+        System.out.println("Goodbye.");
     }
 }
+
+// TODO: validation 'while' condition not great - refactor
+// TODO: promptMainMenu prompts exit program twice even after submitting 'y' and outputs 'goodbye' twice - research and fix
+// TODO: find way to completely remove 'userContinueBoolean' from global scope/program. Seems like it's redundant
