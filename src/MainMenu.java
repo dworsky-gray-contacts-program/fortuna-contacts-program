@@ -63,6 +63,7 @@ public class MainMenu {
                 promptMainMenu();
                 break;
             case 5:
+                System.out.println("Goodbye.");
                 break;
         }
     }
@@ -191,9 +192,9 @@ public class MainMenu {
             List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.substring(1, 20).trim().equalsIgnoreCase(finalDeleteContact)).collect(Collectors.toList());
 
             Files.write(contactsPath, updatedContacts, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-            System.out.println("Contact successfully deleted.");
+            System.out.println("\nContact successfully deleted.");
 
-        } while (validation("delete another contact? Y/N]"));
+        } while (validation("delete another contact? [Y/N]"));
     }
 
     // VALIDATE STRING FOR NAMES - ALL LETTERS
@@ -217,7 +218,7 @@ public class MainMenu {
 
         do {
             System.out.println(question);
-            validate = scanner.nextLine();
+            validate = scanner.nextLine().toLowerCase();
             switch (validate) {
                 case "y":
                     validateBoolean = true;
@@ -226,10 +227,10 @@ public class MainMenu {
                     validateBoolean = false;
                     break;
                 default:
-                    System.out.println("Invalid input. Please enter [Y]es or [N]o.");
+                    System.out.println("\nInvalid input. Please enter [Y]es or [N]o.");
                     validateBoolean = false;
             }
-        } while (validate.length() != 1);
+        } while (!validate.matches("[yn]"));
         return validateBoolean;
     }
 
@@ -237,15 +238,15 @@ public class MainMenu {
     // PROMPT TO GO BACK TO MAIN MENU
     public static void promptMainMenu() throws IOException {
         do {
-            userContinueBoolean = validation("Return to Main Menu? [Y/N]");
-            if (userContinueBoolean) {
+            if (validation("Return to Main Menu? [Y/N]")) {
                 main(null);
+                break;
             }
-        } while (!validation("Exit program? [Y/N]"));
-        System.out.println("Goodbye.");
+
+            if (validation("Exit program? [Y/N]")) {
+                System.out.println("Goodbye.");
+                break;
+            }
+        } while (true);
     }
 }
-
-// TODO: validation 'while' condition not great - refactor
-// TODO: promptMainMenu prompts exit program twice even after submitting 'y' and outputs 'goodbye' twice - research and fix
-// TODO: find way to completely remove 'userContinueBoolean' from global scope/program. Seems like it's redundant
