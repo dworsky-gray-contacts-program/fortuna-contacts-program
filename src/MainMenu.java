@@ -88,17 +88,15 @@ public class MainMenu {
 
 
     // VIEW ALL CONTACTS
-    private static void viewContacts() throws IOException {
-//        contacts = Files.readAllLines(contactsPath);
+    private static void viewContacts() {
         formatContacts(contacts);
     }
 
 
-    // SEARCH FOR CONTACT IN LIST
-    public static void searchContacts() throws IOException {
+    // SEARCH FOR CONTACT
+    public static void searchContacts() {
         String userSearch;
         List<String> results = new ArrayList<>();
-//        contacts = Files.readAllLines(contactsPath);
 
         do {
             System.out.println("\n\t- - - - - - SEARCH - - - - - -");
@@ -123,7 +121,7 @@ public class MainMenu {
     }
 
 
-    // ADD CONTACT TO LIST
+    // ADD CONTACT
     public static void addContact() throws IOException {
         String firstName, lastName, fullName;
         String phoneNum;
@@ -176,7 +174,8 @@ public class MainMenu {
         } while (validation("Add another contact? [Y/N]"));
     }
 
-    // DELETE CONTACT FROM LIST
+
+    // DELETE CONTACT
     public static void deleteContact() throws IOException {
         boolean contactFound = false;
         String deleteContact;
@@ -214,6 +213,23 @@ public class MainMenu {
             }
         } while (validation("Delete Another contact? [Y/N]"));
     }
+
+
+    // PROMPT TO GO BACK TO MAIN MENU
+    public static void promptMainMenu() throws IOException {
+        do {
+            if (validation("Return to Main Menu? [Y/N]")) {
+                main(null);
+                break;
+            }
+
+            if (validation("Exit program? [Y/N]")) {
+                System.out.println("Goodbye.");
+                break;
+            }
+        } while (true);
+    }
+
 
     // VALIDATE STRING FOR NAMES - ALL LETTERS
     public static boolean isOnlyLetters(String input) {
@@ -253,18 +269,4 @@ public class MainMenu {
     }
 
 
-    // PROMPT TO GO BACK TO MAIN MENU
-    public static void promptMainMenu() throws IOException {
-        do {
-            if (validation("Return to Main Menu? [Y/N]")) {
-                main(null);
-                break;
-            }
-
-            if (validation("Exit program? [Y/N]")) {
-                System.out.println("Goodbye.");
-                break;
-            }
-        } while (true);
-    }
 }
