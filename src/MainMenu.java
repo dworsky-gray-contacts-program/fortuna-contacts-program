@@ -178,34 +178,41 @@ public class MainMenu {
 
     // DELETE CONTACT FROM LIST
     public static void deleteContact() throws IOException {
+        boolean contactFound = false;
         String deleteContact;
 
         do {
             viewContacts();
             System.out.println("\t- - - - - DELETE - - - - -");
 
-            do {
-                System.out.println("\tDelete Contact (Enter full name).");
-                deleteContact = scanner.nextLine();
+            System.out.println("\tDelete Contact (Enter full or partial name).");
+            deleteContact = scanner.nextLine().toLowerCase().trim();
 
-                for (String contact : contacts) {
-                    if (contact.substring(1, 20).trim().toLowerCase().equalsIgnoreCase(deleteContact)) {
-                        break;
-                    } else {
-                        userContinueBoolean = validation("No contact found with that name. Try again? [Y/N]");
-                    }
+            for (String contact : contacts) {
+                if (contact.toLowerCase().contains(deleteContact)) {
+                    System.out.println("\n" + contact.substring(2, 35));
+                    contactFound = true;
+                    userContinueBoolean = validation("CONFIRM - Delete contact? [Y/N]");
                 }
-            } while (userContinueBoolean);
+            }
 
-                        validation("Delete contact? [Y/N]");
-            String finalDeleteContact = deleteContact;
+            if (!contactFound) {
+                userContinueBoolean = validation("\nNo contact found with that name.\nSearch again? [Y/N]");
+                    if (userContinueBoolean) {
+                        deleteContact();
+                    }
+                break;
+            }
 
-            List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.substring(1, 20).trim().equalsIgnoreCase(finalDeleteContact)).collect(Collectors.toList());
+            if (userContinueBoolean) {
+                String finalDeleteContact = deleteContact;
 
-            Files.write(contactsPath, updatedContacts, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-            System.out.println("\nContact successfully deleted.");
+                List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.substring(1, 20).trim().equalsIgnoreCase(finalDeleteContact)).collect(Collectors.toList());
 
-        } while (validation("delete another contact? [Y/N]"));
+                Files.write(contactsPath, updatedContacts, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+                System.out.println("\nContact successfully deleted.");
+            }
+        } while (validation("Delete Another contact? [Y/N]"));
     }
 
     // VALIDATE STRING FOR NAMES - ALL LETTERS
