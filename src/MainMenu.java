@@ -15,12 +15,8 @@ public class MainMenu {
     // Initialize Scanner
     private static Scanner scanner = new Scanner(System.in);
 
-    // Initialize new ArrayList
     public static List<String> contacts = new ArrayList<>();
     public static boolean userContinueBoolean = true;
-
-    // Establish directory and file names
-    // Should never change, so have them as 'final'
     final static String DIRECTORY = "data";
     final static String FILENAME = "contacts.txt";
 
@@ -30,12 +26,6 @@ public class MainMenu {
 
 
     public static void main(String[] args) throws IOException {
-        menu();
-    }
-
-
-    // MAIN MENU
-    private static void menu() throws IOException {
         int menuSelection = 0;
         do {
             try {
@@ -44,7 +34,8 @@ public class MainMenu {
                 System.out.println("\t2. Search Contacts List");
                 System.out.println("\t3. Add A Contact");
                 System.out.println("\t4. Delete A Contact");
-                System.out.println("\tPlease enter an option (1, 2, 3, 4)");
+                System.out.println("\t5. Exit Program");
+                System.out.println("\tPlease enter an option (1, 2, 3, 4, 5)");
                 System.out.println("\t- - - - - - - - - - - - - - - -");
                 menuSelection = Integer.parseInt(scanner.nextLine());
                 break;
@@ -71,6 +62,8 @@ public class MainMenu {
                 deleteContact();
                 promptMainMenu();
                 break;
+            case 5:
+                break;
         }
     }
 
@@ -79,14 +72,13 @@ public class MainMenu {
     private static void formatContacts(List<String> input) {
         String nameHeader = "Name";
         String numberHeader = "Phone Number";
-        String pipe = "|";
 
         System.out.println("\n\t+--------------CONTACTS---------------+");
-        System.out.printf("\t%s %-20s | %-1s %s%n", pipe, nameHeader, numberHeader, pipe);
+        System.out.printf("\t| %-18s | %-14s |%n", nameHeader, numberHeader);
         System.out.println("\t|.....................................|");
 
         for (String contact : input) {
-            System.out.printf("\t%s %s%4s%n", pipe, contact, pipe);
+            System.out.printf("\t%s%n", contact);
         }
         System.out.println("\t+-------------------------------------+\n");
     }
@@ -131,68 +123,71 @@ public class MainMenu {
 
     // ADD CONTACT TO LIST
     public static void addContact() throws IOException {
-        String firstName;
-        String lastName;
-        String fullName;
+        String firstName, lastName, fullName;
         String phoneNum;
         String contact;
+        String pipe = "|";
         boolean inputCheck = true;
 
-
-        // Record and format first name
         do {
-            System.out.println("Enter first name.");
-            firstName = scanner.nextLine().trim();
-            firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1); // capitalize 1st letter
+            // FIRST NAME - validate only letters, capitalize 1st letter
+            do {
+                System.out.print("Enter first name: ");
+                firstName = scanner.nextLine().trim();
+                firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1); // capitalize 1st letter
 
-            // Check if input contains only letters
-            if (checkString(firstName)) {
-                inputCheck = true;
-            } else {
-                System.out.println("Invalid entry - please enter a valid name.");
-                firstName = "";
-                inputCheck = false;
-            }
-        } while (!inputCheck);
-        // Record and format last name
-        do {
-            System.out.println("Enter last name.");
-            lastName = scanner.nextLine().trim();
-            lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1); // capitalize 1st letter
+                // Check if input contains only letters
+                if (firstName.matches("[a-zA-Z]+")) {
+                    inputCheck = true;
+                } else {
+                    System.out.println("Invalid entry - please enter a valid name.");
+                    firstName = "";
+                    inputCheck = false;
+                }
+            } while (!inputCheck);
 
-            // Check if input contains only letters
-            if (checkString(lastName)) {
-                inputCheck = true;
-            } else {
-                System.out.println("Invalid entry - please enter a valid name.");
-                lastName = "";
-                inputCheck = false;
-            }
-        } while (!inputCheck);
+            // LAST NAME - validate only letters, capitalize 1st letter
+            do {
+                System.out.print("Enter last name: ");
+                lastName = scanner.nextLine().trim();
+                lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1); // capitalize 1st letter
 
+                // Check if input contains only letters
+                if (lastName.matches("[a-zA-Z]+")) {
+                    inputCheck = true;
+                } else {
+                    System.out.println("Invalid entry - please enter a valid name.");
+                    lastName = "";
+                    inputCheck = false;
+                }
+            } while (!inputCheck);
 
-        fullName = firstName + " " + lastName; // After checks, put first and last name together
+            // PHONE NUMBER - validate only numbers, is either 7 or 10 characters in length
+            do {
+                System.out.print("Enter phone number: ");
+                phoneNum = scanner.nextLine().trim();
 
+                if (phoneNum.matches("[0-9]+") && phoneNum.length() == 7 || phoneNum.length() == 10) {
+                    inputCheck = true;
+                } else {
+                    System.out.println("Not a valid number. Please enter again.");
+                    phoneNum = "";
+                    inputCheck = false;
+                }
+            } while (!inputCheck);
 
-        // Begin checks for phone number
-        do {
-            System.out.println("Enter phone number.");
-            phoneNum = scanner.nextLine().trim();
+            // After checks, put name's together
+            fullName = String.format("%s %s", firstName, lastName);
 
-            if (phoneNum.matches("[0-9]+") && phoneNum.length() == 7 || phoneNum.length() == 10) {
-                inputCheck = true;
-            } else {
-                System.out.println("Not a valid number. Please enter again.");
-                phoneNum = "";
-                inputCheck = false;
-            }
-        } while (!inputCheck);
+            // format contact before adding it to .txt file
+            contact = String.format("%s %-18s %s %-14s %s", pipe, fullName, pipe, phoneNum, pipe);
 
+            // Add new contact to .txt file
+            Files.write(contactsPath, Arrays.asList(contact), StandardOpenOption.APPEND);
 
-        // Add new contact to .txt file
-        contact = String.format("%-20s | %-7s", fullName, phoneNum);
-        Files.write(contactsPath, Arrays.asList(contact), StandardOpenOption.APPEND);
-        System.out.printf("%nName: %s%nNumber: %s%nSuccessfully added to list.%n", fullName, phoneNum);
+            System.out.println("\nContact successfully added.");
+            inputCheck = validation("Add another contact? [Y/N]");
+        } while (inputCheck);
     }
 
     // DELETE CONTACT FROM LIST
@@ -212,19 +207,6 @@ public class MainMenu {
         viewContacts();
     }
 
-    // INPUT CHECK FOR LETTERS
-    public static boolean checkString(String input) {
-        if (input == null) {
-            return false;
-        }
-
-        for (int i = 0; i < input.length(); i++) {
-            if (!Character.isLetter(input.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     // VALIDATION FOR ALL QUESTIONS
     public static boolean validation(String question) {
@@ -248,9 +230,9 @@ public class MainMenu {
         return validateBoolean;
     }
 
+
     // PROMPT TO GO BACK TO MAIN MENU
     public static void promptMainMenu() throws IOException {
-
         do {
             userContinueBoolean = validation("Return to Main Menu? [Y/N]");
 
@@ -260,7 +242,5 @@ public class MainMenu {
                 userContinueBoolean = validation("Exit program? [Y/N]");
             }
         } while (!userContinueBoolean);
-
-        System.out.println("Exiting program. Goodbye.");
     }
 }
