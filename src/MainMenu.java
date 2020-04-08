@@ -27,6 +27,8 @@ public class MainMenu {
 
     public static void main(String[] args) throws IOException {
         int menuSelection = 0;
+        contacts = Files.readAllLines(contactsPath);
+
         do {
             try {
                 System.out.println("\n\t- - - - - MAIN MENU - - - - -");
@@ -87,7 +89,7 @@ public class MainMenu {
 
     // VIEW ALL CONTACTS
     private static void viewContacts() throws IOException {
-        contacts = Files.readAllLines(contactsPath);
+//        contacts = Files.readAllLines(contactsPath);
         formatContacts(contacts);
     }
 
@@ -96,7 +98,7 @@ public class MainMenu {
     public static void searchContacts() throws IOException {
         String userSearch;
         List<String> results = new ArrayList<>();
-        contacts = Files.readAllLines(contactsPath);
+//        contacts = Files.readAllLines(contactsPath);
 
         do {
             System.out.println("\n\t- - - - - - SEARCH - - - - - -");
@@ -185,8 +187,17 @@ public class MainMenu {
             do {
                 System.out.println("\tDelete Contact (Enter full name).");
                 deleteContact = scanner.nextLine();
-            } while (!isOnlyLetters(deleteContact));
 
+                for (String contact : contacts) {
+                    if (contact.substring(1, 20).trim().toLowerCase().equalsIgnoreCase(deleteContact)) {
+                        break;
+                    } else {
+                        userContinueBoolean = validation("No contact found with that name. Try again? [Y/N]");
+                    }
+                }
+            } while (userContinueBoolean);
+
+                        validation("Delete contact? [Y/N]");
             String finalDeleteContact = deleteContact;
 
             List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.substring(1, 20).trim().equalsIgnoreCase(finalDeleteContact)).collect(Collectors.toList());
