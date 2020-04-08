@@ -196,7 +196,8 @@ public class MainMenu {
 
             for (String contact : contacts) {
                 if (contact.toLowerCase().contains(deleteContact)) {
-                    System.out.println("\n" + contact.substring(2, 35));
+                    deleteContact = contact;
+                    System.out.println("\n" + deleteContact.substring(2, 35));
                     contactFound = true;
                     userContinueBoolean = validation("CONFIRM - Delete contact? [Y/N]");
                 }
@@ -213,7 +214,7 @@ public class MainMenu {
             if (userContinueBoolean) {
                 String finalDeleteContact = deleteContact;
 
-                List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.substring(1, 20).trim().equalsIgnoreCase(finalDeleteContact)).collect(Collectors.toList());
+                List<String> updatedContacts = Files.lines(contactsPath).filter(line -> !line.contains(finalDeleteContact)).collect(Collectors.toList());
 
                 Files.write(contactsPath, updatedContacts, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
                 System.out.println("\nContact successfully deleted.");
