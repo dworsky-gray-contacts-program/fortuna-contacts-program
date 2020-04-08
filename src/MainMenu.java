@@ -164,7 +164,14 @@ public class MainMenu {
             // After checks, put name's together
             fullName = String.format("%s %s", firstName, lastName);
 
-            // format contact before adding it to .txt file
+            // Format phone number to include dashes
+            if (phoneNum.length() == 7) {
+                phoneNum = phoneNum.substring(0, 3) + "-" + phoneNum.substring(3, 7);
+            } else if (phoneNum.length() == 10) {
+                phoneNum = phoneNum.substring(0,3)+"-"+phoneNum.substring(3,6)+"-"+phoneNum.substring(6,10);
+            }
+
+            // Format contact before adding it to .txt file
             contact = String.format("| %-18s | %-14s |", fullName, phoneNum);
 
             // Add new contact to .txt file

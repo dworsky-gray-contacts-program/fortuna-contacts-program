@@ -1,6 +1,6 @@
-| Scooby Doo         | 4553442333     |
-| Pink Panther       | 1091099000     |
-| Yogi Bear          | 4567878888     |
-| John Doe           | 5123456        |
-| Jane Doe           | 9991113333     |
-| Johnny Bravo       | 1112223333     |
+| Scooby Doo         | 455-344-2333   |
+| Pink Panther       | 109-109-9000   |
+| Yogi Bear          | 456-787-8888   |
+| John Doe           | 512-3456       |
+| Jane Doe           | 999-111-3333   |
+| Johnny Bravo       | 111-222-3333   |
